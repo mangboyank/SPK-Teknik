@@ -12,7 +12,7 @@ import { useFirebaseData } from './hooks/useFirebaseData';
 import { addSpk, updateSpk, deleteSpk, addNotification, updateNotification, addBackupLog, updatePins } from './lib/dataService';
 
 export default function App() {
-  const { spks, notifications, logs, pins, loading } = useFirebaseData();
+  const { spks, notifications, logs, pins, loading, isOnline } = useFirebaseData();
 
   const [currentRole, setCurrentRole] = useState<Role>(() => {
     const saved = localStorage.getItem('spk_active_role');
@@ -517,10 +517,14 @@ export default function App() {
             {/* Notification Pane and User badge */}
             <div className="flex items-center gap-4">
               
-              {/* Firebase Quota Shield Badge (Always visible on large screens) */}
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/25 text-green-400 rounded-xl text-xs font-bold">
-                <HardDrive className="w-3.5 h-3.5 text-green-400 animate-pulse" />
-                <span>Quota Guard: 100% Aman</span>
+              {/* Firebase Quota Shield Badge / Connection Status (Always visible on large screens) */}
+              <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 border rounded-xl text-xs font-bold transition-colors ${
+                isOnline 
+                  ? 'bg-green-500/10 border-green-500/25 text-green-400' 
+                  : 'bg-red-500/10 border-red-500/25 text-red-400'
+              }`}>
+                <HardDrive className={`w-3.5 h-3.5 ${isOnline ? 'text-green-400 animate-pulse' : 'text-red-400'}`} />
+                <span>{isOnline ? 'Live DB Terhubung' : 'Terputus dari Database (Offline)'}</span>
               </div>
 
               {/* Notification bell - only for staff/dashboard roles */}
